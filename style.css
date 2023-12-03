@@ -21,6 +21,12 @@ body {
 	font-family: Arial, Helvetica, sans-serif;
 	width: 400px;
 	margin: auto;
+	background: linear-gradient(
+		112.1deg,
+		rgb(32, 38, 57) 11.4%,
+		rgb(63, 76, 119) 70.2%
+	);
+	color: #fff;
 }
 
 h1,
@@ -39,7 +45,7 @@ p {
 
 .container,
 .container > div {
-	border: 1px solid black;
+	border: 1px solid rgb(214, 210, 210);
 	border-radius: var(--spacing-regular);
 	padding: var(--spacing-regular);
 }
@@ -60,6 +66,7 @@ p {
 
 #current-forecast > .description,
 #current-forecast > .min-max-temp {
+	text-transform: capitalize;
 	font-size: var(--font-regular);
 	font-weight: var(--font-semibold);
 }
@@ -67,6 +74,7 @@ p {
 /* hourly forecast div */
 #hourly-forecast {
 	grid-area: hourly;
+	text-align: center;
 }
 
 #five-day-forecast {
