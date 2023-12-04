@@ -75,10 +75,27 @@ const loadHourlyForecast = (hourlyForecast) => {
 	hourlyContainer.innerHTML = innerHTMLString;
 };
 
+// load feels like
+const loadFeelsLike = ({ main }) => {
+	let feelsLikeContainer = document.querySelector('#feels-like');
+	feelsLikeContainer.querySelector('.feels-like-temp').textContent =
+		formatTemperature(main.feels_like);
+};
+
+// load humidity
+const loadHumidity = ({ main }) => {
+	let humidityContainer = document.querySelector('#humidity');
+	humidityContainer.querySelector('.humidity').textContent = main.humidity;
+};
+
 document.addEventListener('DOMContentLoaded', async () => {
 	const currentWeather = await getCurrentWeatherData();
 	loadCurrentForecast(currentWeather);
 
 	const hourlyForecast = await getHourlyForecastData();
 	loadHourlyForecast(hourlyForecast);
+
+	loadFeelsLike(currentWeather);
+
+	loadHumidity(currentWeather);
 });
