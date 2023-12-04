@@ -67,7 +67,7 @@ const loadHourlyForecast = (hourlyForecast) => {
 	// fetch the details and attach them to innerHTML
 	for (let { temp, icon, dt_txt } of dataFor12Hours) {
 		innerHTMLString += `<div>
-    <h2 class="time">${dt_txt.split(' ')[1]}</h2>
+    <h3 class="time">${dt_txt.split(' ')[1]}</h3>
     <img src="${createIconUrl(icon)}" alt="" class="icon" />
     <p class="hourly-temp">${formatTemperature(temp)}</p>
   </div>`;

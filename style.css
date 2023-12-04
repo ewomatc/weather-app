@@ -83,16 +83,26 @@ p {
 	grid-auto-flow: column;
 	grid-auto-columns: minmax(100px 1fr);
 	overflow-x: auto;
+	gap: var(--spacing-meduim);
 }
 
+.hourly-container .hourly-temp {
+	font-size: var(--font-regular);
+	font-weight: var(--font-semibold);
+}
+
+/* five day div */
 #five-day-forecast {
 	grid-area: fiveday;
+	text-align: center;
 }
 
 #feels-like {
 	grid-area: feelslike;
+	text-align: center;
 }
 
 #humidity {
 	grid-area: humidity;
+	text-align: center;
 }
