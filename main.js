@@ -1,5 +1,5 @@
 const API_KEY = '26a7a36fb0c93415308af69767c50f15';
-const city = 'Lagos';
+const city = 'Milwaukee';
 
 // Get current weather data block
 const getCurrentWeatherData = async () => {
@@ -37,8 +37,9 @@ const getHourlyForecastData = async () => {
 	});
 };
 
-// formatTemperature changes the temp to 1 decimal place and gives it the degree symbol
 const formatTemperature = (temp) => `${temp?.toFixed(1)}°`;
+const createIconUrl = (icon) =>
+	` https://openweathermap.org/img/wn/${icon}@2x.png`;
 
 //load current forecast
 const loadCurrentForecast = ({ name, main, weather: [{ description }] }) => {
@@ -58,7 +59,20 @@ const loadCurrentForecast = ({ name, main, weather: [{ description }] }) => {
 
 // load hourly forecast
 const loadHourlyForecast = (hourlyForecast) => {
-	console.log(hourlyForecast);
+	const dataFor12Hours = hourlyForecast.slice(1, 13);
+	const hourlyContainer = document.querySelector('.hourly-container');
+
+	let innerHTMLString = ``;
+
+	// fetch the details and attach them to innerHTML
+	for (let { temp, icon, dt_txt } of dataFor12Hours) {
+		innerHTMLString += `<div>
+    <h2 class="time">${dt_txt.split(' ')[1]}</h2>
+    <img src="${createIconUrl(icon)}" alt="" class="icon" />
+    <p class="hourly-temp">${formatTemperature(temp)}</p>
+  </div>`;
+	}
+	hourlyContainer.innerHTML = innerHTMLString;
 };
 
 document.addEventListener('DOMContentLoaded', async () => {
@@ -66,4 +80,5 @@ document.addEventListener('DOMContentLoaded', async () => {
 	loadCurrentForecast(currentWeather);
 
 	const hourlyForecast = await getHourlyForecastData();
+	loadHourlyForecast(hourlyForecast);
 });
