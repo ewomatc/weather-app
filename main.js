@@ -1,5 +1,5 @@
 const API_KEY = '26a7a36fb0c93415308af69767c50f15';
-const city = 'Milwaukee';
+const city = 'Tokyo';
 
 // Get current weather data block
 const getCurrentWeatherData = async () => {
@@ -85,7 +85,9 @@ const loadFeelsLike = ({ main }) => {
 // load humidity
 const loadHumidity = ({ main }) => {
 	let humidityContainer = document.querySelector('#humidity');
-	humidityContainer.querySelector('.humidity').textContent = main.humidity;
+	humidityContainer.querySelector(
+		'.humidity'
+	).textContent = `${main.humidity} %`;
 };
 
 document.addEventListener('DOMContentLoaded', async () => {
