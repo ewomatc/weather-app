@@ -1,5 +1,7 @@
 const API_KEY = '26a7a36fb0c93415308af69767c50f15';
-const city = 'Tokyo';
+const city = 'Mowe';
+
+const DAYS_OF_THE_WEEK = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
 
 // Get current weather data block
 const getCurrentWeatherData = async () => {
@@ -75,6 +77,53 @@ const loadHourlyForecast = (hourlyForecast) => {
 	hourlyContainer.innerHTML = innerHTMLString;
 };
 
+const calculateDayWiseForecast = (hourlyForecast) => {
+	let dayWiseForecast = new Map();
+	for (let forecast of hourlyForecast) {
+		const [date] = forecast.dt_txt.split(' ');
+		const dayOfTheWeek = DAYS_OF_THE_WEEK[new Date(date).getDay()];
+
+		if (dayWiseForecast.has(dayOfTheWeek)) {
+			let forecastForTheDay = dayWiseForecast.get(dayOfTheWeek);
+			forecastForTheDay.push(forecast);
+			dayWiseForecast.set(dayOfTheWeek, forecastForTheDay);
+		} else {
+			dayWiseForecast.set(dayOfTheWeek, [forecast]);
+		}
+
+		for (let [key, value] of dayWiseForecast) {
+			let temp_min = Math.min(...Array.from(value, (val) => val.temp_min));
+			let temp_max = Math.max(...Array.from(value, (val) => val.temp_max));
+
+			dayWiseForecast.set(key, {
+				temp_min,
+				temp_max,
+				icon: value.find((v) => v.icon),
+			});
+		}
+		return dayWiseForecast;
+	}
+};
+// load five day forecast
+const loadFiveDayForecast = (hourlyForecast) => {
+	const dayWiseForecast = calculateDayWiseForecast(hourlyForecast);
+	const container = document.querySelector('.five-day-forecast-container');
+	let dayWiseInfo = '';
+
+	Array.from(dayWiseForecast).map(
+		([day, { temp_max, temp_min, icon }], index) => {
+			dayWiseInfo += `<div class="day-wise-forecast">
+    <h3>${index === 0 ? 'today' : day}</h3>
+    <img src="${createIconUrl(icon)}" alt="" class="icon" />
+    <p class="min-temp">${temp_min}</p>
+    <p class="max-temp">${temp_max}</p>
+  </div>`;
+		}
+	);
+
+	container.innerHTML = dayWiseInfo;
+};
+
 // load feels like
 const loadFeelsLike = ({ main }) => {
 	let feelsLikeContainer = document.querySelector('#feels-like');
@@ -96,6 +145,7 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 	const hourlyForecast = await getHourlyForecastData();
 	loadHourlyForecast(hourlyForecast);
+	loadFiveDayForecast(hourlyForecast);
 
 	loadFeelsLike(currentWeather);
 
