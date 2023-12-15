@@ -1,10 +1,17 @@
 const API_KEY = '26a7a36fb0c93415308af69767c50f15';
-const city = 'Mowe';
 
 const DAYS_OF_THE_WEEK = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
 
+const getCitiesUsingGeolocation = async (searchText) => {
+	const response = await fetch(
+		`http://api.openweathermap.org/geo/1.0/direct?q=${searchText}&limit=5&appid=${API_KEY}`
+	);
+	return response.json();
+};
+
 // Get current weather data block
 const getCurrentWeatherData = async () => {
+	const city = 'Mowe';
 	const response = await fetch(
 		`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric`
 	);
@@ -13,6 +20,7 @@ const getCurrentWeatherData = async () => {
 
 // Get hourly forecast data
 const getHourlyForecastData = async () => {
+	const city = 'Mowe';
 	const response = await fetch(
 		`https://api.openweathermap.org/data/2.5/forecast?q=${city}&appid=${API_KEY}&units=metric`
 	);
@@ -105,24 +113,24 @@ const calculateDayWiseForecast = (hourlyForecast) => {
 	}
 };
 // load five day forecast
-const loadFiveDayForecast = (hourlyForecast) => {
-	const dayWiseForecast = calculateDayWiseForecast(hourlyForecast);
-	const container = document.querySelector('.five-day-forecast-container');
-	let dayWiseInfo = '';
+// const loadFiveDayForecast = (hourlyForecast) => {
+// 	const dayWiseForecast = calculateDayWiseForecast(hourlyForecast);
+// 	const container = document.querySelector('.five-day-forecast-container');
+// 	let dayWiseInfo = '';
 
-	Array.from(dayWiseForecast).map(
-		([day, { temp_max, temp_min, icon }], index) => {
-			dayWiseInfo += `<div class="day-wise-forecast">
-    <h3>${index === 0 ? 'today' : day}</h3>
-    <img src="${createIconUrl(icon)}" alt="" class="icon" />
-    <p class="min-temp">${temp_min}</p>
-    <p class="max-temp">${temp_max}</p>
-  </div>`;
-		}
-	);
+// 	Array.from(dayWiseForecast).map(
+// 		([day, { temp_max, temp_min, icon }], index) => {
+// 			dayWiseInfo += `<div class="day-wise-forecast">
+//     <h3>${day}</h3>
+//     <img src="${createIconUrl(icon)}" alt="icon" class="icon" />
+//     <p class="min-temp">${formatTemperature(temp_min)}</p>
+//     <p class="max-temp">${formatTemperature(temp_max)}</p>
+//   </div>`;
+// 		}
+// 	);
 
-	container.innerHTML = dayWiseInfo;
-};
+// 	container.innerHTML = dayWiseInfo;
+// };
 
 // load feels like
 const loadFeelsLike = ({ main }) => {
@@ -139,13 +147,40 @@ const loadHumidity = ({ main }) => {
 	).textContent = `${main.humidity} %`;
 };
 
+function debounce(func) {
+	let timer;
+	return (...args) => {
+		clearTimeout(timer);
+		timer = setTimeout(() => {
+			func.apply(this, args);
+		}, 500);
+	};
+}
+
+const onSearchChange = async (event) => {
+	let { value } = event.target;
+	const listOfCities = await getCitiesUsingGeolocation(value);
+	let options = '';
+	for (let { name, state, country } of listOfCities) {
+		options += `<option value="${name}, ${state}, ${country}"></option>`;
+	}
+	document.querySelector('#cities').innerHTML = options;
+	console.log(listOfCities);
+};
+
+const debounceSearch = debounce((event) => onSearchChange(event));
+
 document.addEventListener('DOMContentLoaded', async () => {
+	const searchInput = document.querySelector('#search');
+	searchInput.addEventListener('input', debounceSearch);
+
 	const currentWeather = await getCurrentWeatherData();
 	loadCurrentForecast(currentWeather);
 
 	const hourlyForecast = await getHourlyForecastData();
 	loadHourlyForecast(hourlyForecast);
-	loadFiveDayForecast(hourlyForecast);
+
+	// loadFiveDayForecast(hourlyForecast);
 
 	loadFeelsLike(currentWeather);
 

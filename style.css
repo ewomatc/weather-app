@@ -9,7 +9,7 @@
 	--spacing-regular: 16px;
 
 	--font-regular: 0.5rem;
-	--font-regular: 1rem;
+	--font-semi-regular: 1.5rem;
 	--font-large: 2rem;
 	--font-xl: 4rem;
 
@@ -43,7 +43,7 @@ p {
 .container {
 	display: grid;
 	grid-template-columns: repeat(2, 1fr);
-	grid-template-areas: 'current current' 'hourly hourly' 'fiveday fiveday' 'feelslike humidity';
+	grid-template-areas: 'search search' 'current current' 'hourly hourly' 'fiveday fiveday' 'feelslike humidity';
 	gap: var(--spacing-regular);
 }
 
@@ -58,6 +58,16 @@ p {
 	border-radius: var(--spacing-meduim);
 }
 
+/* search div */
+#search {
+	grid-area: search;
+	color: white;
+	font-size: var(--font-semi-regular);
+	border: 1px solid white;
+	border-radius: 7px;
+	padding: var(--spacing-meduim);
+	background: transparent;
+}
 /* current forecast div */
 #current-forecast {
 	grid-area: current;
@@ -71,7 +81,7 @@ p {
 #current-forecast > .description,
 #current-forecast > .min-max-temp {
 	text-transform: capitalize;
-	font-size: var(--font-regular);
+	font-size: var(--font-semi-regular);
 	font-weight: var(--font-semibold);
 }
 
@@ -119,6 +129,10 @@ p {
 	font-weight: var(--font-semibold);
 }
 
+.five-day-forecast-container .day-wise-forecast .icon {
+	width: 75px;
+	height: 75px;
+}
 #feels-like {
 	grid-area: feelslike;
 	text-align: center;

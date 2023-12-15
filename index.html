@@ -8,6 +8,19 @@
 	</head>
 	<body>
 		<main class="container">
+			<input
+				list="cities"
+				type="search"
+				name="search"
+				id="search"
+				placeholder="Search city"
+				autocomplete="off"
+			/>
+			<datalist id="cities">
+				<option value="Lagos"></option>
+				<option value="Madrid"></option>
+				<option value="Dublin"></option>
+			</datalist>
 			<div id="current-forecast">
 				<h1 class="city"></h1>
 				<p class="temp"></p>
@@ -18,29 +31,29 @@
 				<h2>3-Hour forecast</h2>
 				<section class="hourly-container">
 					<div>
-						<h2 class="time">Now</h2>
-						<img src="" alt="" class="icon" />icon
-						<p class="hourly-temp">temp</p>
+						<h2 class="time"></h2>
+						<img src="" alt="" class="icon" />
+						<p class="hourly-temp"></p>
 					</div>
 				</section>
 			</div>
-			<div id="five-day-forecast">
+			<!-- <div id="five-day-forecast">
 				<h2>5-Day forecast</h2>
 				<section class="five-day-forecast-container">
 					<div class="day-wise-forecast">
-						<h3>Today</h3>
+						<h3></h3>
 						<img src="" alt="" class="icon" />
-						<p class="min-temp">L</p>
-						<p class="max-temp">H</p>
+						<p class="min-temp"></p>
+						<p class="max-temp"></p>
 					</div>
 					<div class="day-wise-forecast">
-						<h3>Tommorow</h3>
+						<h3></h3>
 						<img src="" alt="" class="icon" />
-						<p class="min-temp">L</p>
-						<p class="max-temp">H</p>
+						<p class="min-temp"></p>
+						<p class="max-temp"></p>
 					</div>
 				</section>
-			</div>
+			</div> -->
 			<div id="feels-like">
 				<h2>Feels Like</h2>
 				<p class="feels-like-temp"></p>
