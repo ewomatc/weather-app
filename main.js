@@ -2,6 +2,9 @@ const API_KEY = '26a7a36fb0c93415308af69767c50f15';
 
 const DAYS_OF_THE_WEEK = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
 
+let selectedCityText;
+let selectedCity;
+
 const getCitiesUsingGeolocation = async (searchText) => {
 	const response = await fetch(
 		`http://api.openweathermap.org/geo/1.0/direct?q=${searchText}&limit=5&appid=${API_KEY}`
@@ -10,11 +13,13 @@ const getCitiesUsingGeolocation = async (searchText) => {
 };
 
 // Get current weather data block
-const getCurrentWeatherData = async () => {
-	const city = 'Mowe';
-	const response = await fetch(
-		`https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric`
-	);
+const getCurrentWeatherData = async ({ lat, lon, name: city }) => {
+	const url =
+		lat && lon
+			? `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}&units=metric`
+			: `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric`;
+
+	const response = await fetch(url);
 	return response.json();
 };
 
@@ -147,6 +152,20 @@ const loadHumidity = ({ main }) => {
 	).textContent = `${main.humidity} %`;
 };
 
+const loadData = async () => {
+	const currentWeather = await getCurrentWeatherData(selectedCity);
+	loadCurrentForecast(currentWeather);
+
+	const hourlyForecast = await getHourlyForecastData();
+	loadHourlyForecast(hourlyForecast);
+
+	// loadFiveDayForecast(hourlyForecast);
+
+	loadFeelsLike(currentWeather);
+
+	loadHumidity(currentWeather);
+};
+
 function debounce(func) {
 	let timer;
 	return (...args) => {
@@ -159,13 +178,37 @@ function debounce(func) {
 
 const onSearchChange = async (event) => {
 	let { value } = event.target;
-	const listOfCities = await getCitiesUsingGeolocation(value);
-	let options = '';
-	for (let { name, state, country } of listOfCities) {
-		options += `<option value="${name}, ${state}, ${country}"></option>`;
+
+	if (!value) {
+		selectedCity = null;
+		selectedCityText = '';
 	}
-	document.querySelector('#cities').innerHTML = options;
-	console.log(listOfCities);
+	if (value && selectedCityText !== value) {
+		const listOfCities = await getCitiesUsingGeolocation(value);
+		let options = '';
+		for (let { lat, lon, name, state, country } of listOfCities) {
+			options += `<option data-city-details='${JSON.stringify({
+				lat,
+				lon,
+				name,
+			})}' value="${name}, ${state}, ${country}"></option>`;
+		}
+		document.querySelector('#cities').innerHTML = options;
+		console.log(listOfCities);
+	}
+};
+
+const handleCitySelection = (event) => {
+	selectedCityText = event.target.value;
+	let options = document.querySelectorAll('#cities > option');
+
+	if (options?.length) {
+		let selectedOption = Array.from(options).find(
+			(opt) => opt.value === selectedCityText
+		);
+		selectedCity = JSON.parse(selectedOption.getAttribute('data-city-details'));
+		loadData();
+	}
 };
 
 const debounceSearch = debounce((event) => onSearchChange(event));
@@ -173,16 +216,5 @@ const debounceSearch = debounce((event) => onSearchChange(event));
 document.addEventListener('DOMContentLoaded', async () => {
 	const searchInput = document.querySelector('#search');
 	searchInput.addEventListener('input', debounceSearch);
-
-	const currentWeather = await getCurrentWeatherData();
-	loadCurrentForecast(currentWeather);
-
-	const hourlyForecast = await getHourlyForecastData();
-	loadHourlyForecast(hourlyForecast);
-
-	// loadFiveDayForecast(hourlyForecast);
-
-	loadFeelsLike(currentWeather);
-
-	loadHumidity(currentWeather);
+	searchInput.addEventListener('change', handleCitySelection);
 });
