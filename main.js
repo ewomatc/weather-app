@@ -152,6 +152,17 @@ const loadHumidity = ({ main }) => {
 	).textContent = `${main.humidity} %`;
 };
 
+const loadForecastUsingGeolocation = () => {
+	navigator.geolocation.getCurrentPosition(
+		({ coords }) => {
+			const { latitude: lat, longitude: lon } = coords;
+			selectedCity = { lat, lon };
+			loadData();
+		},
+		(err) => console.log(err)
+	);
+};
+
 const loadData = async () => {
 	const currentWeather = await getCurrentWeatherData(selectedCity);
 	loadCurrentForecast(currentWeather);
@@ -214,6 +225,7 @@ const handleCitySelection = (event) => {
 const debounceSearch = debounce((event) => onSearchChange(event));
 
 document.addEventListener('DOMContentLoaded', async () => {
+	loadForecastUsingGeolocation();
 	const searchInput = document.querySelector('#search');
 	searchInput.addEventListener('input', debounceSearch);
 	searchInput.addEventListener('change', handleCitySelection);
